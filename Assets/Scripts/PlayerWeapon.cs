@@ -6,8 +6,6 @@ public class PlayerWeapon
 
     public string name = "Revolver";
 
-    public float fireRate = 0f;
-
     public int maxBullets = 5;
     [HideInInspector]
     public int bullets;

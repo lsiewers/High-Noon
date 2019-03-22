@@ -1,15 +1,31 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMotor : MonoBehaviour
-{
-    private Vector3 rotation = Vector3.zero;
-    private Vector3 cameraRotation = Vector3.zero;
+public class PlayerMotor : MonoBehaviour { 
 
     private Rigidbody rb;
 
+    private float cameraRotationX = 0f;
+    private float currentCameraRotationX = 0f;
+    private float cameraRotationY = 0f;
+    private float currentCameraRotationY = 0f;
+    [SerializeField]
+    private float cameraRotationLimit = 85f;
+
     [SerializeField]
     private Camera cam;
+    [SerializeField]
+    private Camera weaponCam;
+    [SerializeField]
+    private GameObject crosshair;
+
+    [HideInInspector]
+    public bool zoom = false;
+
+    [SerializeField]
+    private int normalZoom;
+    [SerializeField]
+    private int extraZoom;
 
     // Start is called before the first frame update
     void Start()
@@ -20,27 +36,54 @@ public class PlayerMotor : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        ZoomCamera();
         PerformRotation();
     }
 
     // Gets rotation vector
-    public void Rotate(Vector3 _rotation)
+    public void Rotate(float _cameraRotationY)
     {
-        rotation = _rotation;
+        cameraRotationY = _cameraRotationY;
     }
 
-    // Gets rotation vector
-    public void CameraRotate(Vector3 _cameraRotation)
+    // Gets a rotational vector for the camera
+    public void RotateCamera(float _cameraRotationX)
     {
-        cameraRotation = _cameraRotation;
+        cameraRotationX = _cameraRotationX;
+    }
+
+    void ZoomCamera()
+    {
+        if (Input.GetButtonDown("Jump"))
+        {
+            zoom = true;
+            cam.fieldOfView = extraZoom;
+            weaponCam.enabled = false;
+            crosshair.SetActive(false);
+        }
+        else if (Input.GetButtonUp("Jump"))
+        {
+            zoom = false;
+            cam.fieldOfView = normalZoom;
+            weaponCam.enabled = true;
+            crosshair.SetActive(true);
+        }
     }
 
     void PerformRotation()
     {
-        rb.MoveRotation(rb.rotation * Quaternion.Euler(rotation));
         if (cam != null)
         {
-            cam.transform.Rotate(-cameraRotation);
+            // Set our rotation and clamp it
+            currentCameraRotationX -= cameraRotationX;
+            currentCameraRotationX = Mathf.Clamp(currentCameraRotationX, -cameraRotationLimit, cameraRotationLimit);
+            // Set our rotation and clamp it
+            currentCameraRotationY -= cameraRotationY;
+            currentCameraRotationY = Mathf.Clamp(currentCameraRotationY, -cameraRotationLimit, cameraRotationLimit);
+
+            //Apply our rotation to the transform of our camera
+            // random range is shake effect
+            cam.transform.localEulerAngles = new Vector3(currentCameraRotationX, currentCameraRotationY, 0f);
         }
     }
 }

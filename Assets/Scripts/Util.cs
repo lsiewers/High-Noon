@@ -16,6 +16,5 @@ public class Util : MonoBehaviour
 
             SetLayerRecursively(_child.gameObject, _newLayer);
         }
-
     }
 }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 96eafefd876034cd5b420c57e751fe73
+guid: ae76b5d2f1f764dabb8b5a388e1d5e04
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,9 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Arial Black
+  fontName: Brush Script MT
   fontNames:
-  - Arial Black
+  - Brush Script MT
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

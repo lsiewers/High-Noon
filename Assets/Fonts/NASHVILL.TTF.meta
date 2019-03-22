@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cd57014c34a1149debe348f8c1ce78a2
+guid: 6c3efc231038d46de9eaf7647f796cf4
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,9 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Copperplate
+  fontName: Nashville
   fontNames:
-  - Copperplate
+  - Nashville
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

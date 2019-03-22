@@ -6,6 +6,8 @@ public class PlayerShoot : MonoBehaviour
 
     private PlayerWeapon currentWeapon;
     private WeaponManager weaponManager;
+    private PlayerMotor playerMotor;
+    private GameManager gameManager;
 
     public static int ammo;
 
@@ -29,45 +31,34 @@ public class PlayerShoot : MonoBehaviour
             Debug.LogError("PlayerShoot: No camera referenced!");
         }
 
-
         weaponManager = GetComponent<WeaponManager>();
+        playerMotor = GetComponent<PlayerMotor>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
         currentWeapon = weaponManager.GetCurrentWeapon();
+        ammo = currentWeapon.bullets;
 
-        if (currentWeapon.fireRate <= 0f)
+        if (Input.GetButtonDown("Fire1") && !playerMotor.zoom)
         {
-            if (Input.GetButtonDown("Fire1"))
-            {
-                Shoot();
-            }
+            Shoot();
         }
-        else
-        {
-            if (Input.GetButtonDown("Fire1"))
-            {
-                InvokeRepeating("Shoot", 0f, 1f / currentWeapon.fireRate);
-            }
-            else if (Input.GetButtonUp("Fire1"))
-            {
-                CancelInvoke("Shoot");
-            }
-        }
+
     }
 
     void Shoot()
     {
+
         if (currentWeapon.bullets <= 0)
         {
-            GameManager.gameOver();
+            gameManager.gameOver();
             return;
         }
 
         currentWeapon.bullets--;
-        ammo = currentWeapon.bullets;
 
         weaponManager.GetCurrentGraphics().muzzleFlash.Play();
 
@@ -78,7 +69,14 @@ public class PlayerShoot : MonoBehaviour
             if (_hit.collider.tag == "Opponent")
             {
                 Debug.Log("You shot:" + _hit.collider.name);
-                Invoke("NextRound", 2);
+                if (_hit.collider.name == "Cowboy " + GameManager.data.tips[GameManager.activeTip].Answer + "(Clone)")
+                {
+                    Debug.Log("You killed the right one!!!");
+                }
+                else
+                {
+                    Debug.Log("You killed the wrong one!!!");
+                }
             }
 
 
@@ -89,6 +87,6 @@ public class PlayerShoot : MonoBehaviour
 
     void NextRound()
     {
-        GameManager.nextRound();
+        gameManager.nextRound();
     }
 }
