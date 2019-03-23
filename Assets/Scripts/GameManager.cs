@@ -1,17 +1,18 @@
-﻿    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.IO;
 
 public class GameManager : MonoBehaviour
 {
-    private static int currentRound;
-    private static int roundsAmount = 5;
+    public static int currentRound = 0;
+    public static int roundsAmount = 5;
 
     public static TipsData data;
 
     public static int activeTip;
     private List<int> passedTips = new List<int>();
+
+    public string gameOverMsg;
 
     private void Awake()
     {
@@ -25,17 +26,20 @@ public class GameManager : MonoBehaviour
 
     public void startGame()
     {
-        currentRound = 1;
-        SetActiveTip();
-        SceneManager.LoadScene("Round " + currentRound.ToString());
+        currentRound = 0;
+        SceneManager.LoadScene("Tutorial");
     }
 
-    public void nextRound() 
+    public void nextRound()
     {
-        if(currentRound < roundsAmount) {
+        if (currentRound < roundsAmount) {
             currentRound++;
-           // SetActiveTip();
-            SceneManager.LoadScene(currentRound);
+            SetActiveTip();
+            SceneManager.LoadScene("Round " + currentRound.ToString());
+        }
+        else
+        {
+            SceneManager.LoadScene("Winscreen");
         }
     }
 
@@ -49,9 +53,10 @@ public class GameManager : MonoBehaviour
         passedTips.Add(activeTip);
     }
 
-    public void gameOver()
+    public void GameOver(string message)
     {
-        SceneManager.LoadScene("gameOver");
+        SceneManager.LoadScene("Game Over");
+        gameOverMsg = message;
     }
 
 }

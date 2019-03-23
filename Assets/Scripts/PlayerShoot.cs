@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(WeaponManager))]
 public class PlayerShoot : MonoBehaviour
@@ -8,8 +9,10 @@ public class PlayerShoot : MonoBehaviour
     private WeaponManager weaponManager;
     private PlayerMotor playerMotor;
     private GameManager gameManager;
+    private RoundManager roundManager;
 
     public static int ammo;
+    public static bool canShoot = false;
 
     [SerializeField]
     private GameObject weaponGFX;
@@ -34,6 +37,7 @@ public class PlayerShoot : MonoBehaviour
         weaponManager = GetComponent<WeaponManager>();
         playerMotor = GetComponent<PlayerMotor>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        roundManager = GameObject.Find("RoundManager").GetComponent<RoundManager>();
     }
 
     // Update is called once per frame
@@ -42,9 +46,12 @@ public class PlayerShoot : MonoBehaviour
         currentWeapon = weaponManager.GetCurrentWeapon();
         ammo = currentWeapon.bullets;
 
-        if (Input.GetButtonDown("Fire1") && !playerMotor.zoom)
+        if (canShoot)
         {
-            Shoot();
+            if (Input.GetButtonDown("Fire1") && !playerMotor.zoom)
+            {
+                Shoot();
+            }
         }
 
     }
@@ -52,9 +59,9 @@ public class PlayerShoot : MonoBehaviour
     void Shoot()
     {
 
-        if (currentWeapon.bullets <= 0)
+        if (currentWeapon.bullets == 0)
         {
-            gameManager.gameOver();
+            gameManager.GameOver("Out of bullets!");
             return;
         }
 
@@ -64,29 +71,30 @@ public class PlayerShoot : MonoBehaviour
 
         RaycastHit _hit;
 
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, 100f, mask))
+        // see if draw is called
+        if (!roundManager.draw)
         {
-            if (_hit.collider.tag == "Opponent")
-            {
-                Debug.Log("You shot:" + _hit.collider.name);
-                if (_hit.collider.name == "Cowboy " + GameManager.data.tips[GameManager.activeTip].Answer + "(Clone)")
-                {
-                    Debug.Log("You killed the right one!!!");
-                }
-                else
-                {
-                    Debug.Log("You killed the wrong one!!!");
-                }
-            }
-
-
-            GameObject _hitEffect = (GameObject)Instantiate(weaponManager.GetCurrentGraphics().hitEffectPrefab, _hit.point, Quaternion.LookRotation(_hit.normal));
-            Destroy(_hitEffect, 2f);
+            gameManager.GameOver("You shot too early, wait until 'Draw' is called");
         }
-    }
+        else
+        {
+            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, 100f, mask))
+            {
+                if (_hit.collider.tag == "Opponent")
+                {
+                    if (_hit.collider.name == "Cowboy " + GameManager.data.tips[GameManager.activeTip].Answer + "(Clone)")
+                    {
+                        SceneManager.LoadScene("Succes");
+                    }
+                    else
+                    {
+                        gameManager.GameOver("Wrong opponent!");
+                    }
+                }
 
-    void NextRound()
-    {
-        gameManager.nextRound();
+                GameObject _hitEffect = (GameObject)Instantiate(weaponManager.GetCurrentGraphics().hitEffectPrefab, _hit.point, Quaternion.LookRotation(_hit.normal));
+                Destroy(_hitEffect, 2f);
+            }
+        }
     }
 }

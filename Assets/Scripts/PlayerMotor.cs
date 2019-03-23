@@ -54,20 +54,19 @@ public class PlayerMotor : MonoBehaviour {
 
     void ZoomCamera()
     {
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             zoom = true;
             cam.fieldOfView = extraZoom;
-            weaponCam.enabled = false;
-            crosshair.SetActive(false);
         }
-        else if (Input.GetButtonUp("Jump"))
+        else if (Input.GetKeyUp(KeyCode.Space))
         {
             zoom = false;
             cam.fieldOfView = normalZoom;
-            weaponCam.enabled = true;
-            crosshair.SetActive(true);
         }
+
+        weaponCam.enabled = !zoom;
+        crosshair.SetActive(!zoom);
     }
 
     void PerformRotation()

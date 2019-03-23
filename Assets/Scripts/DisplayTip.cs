@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,13 +9,31 @@ public class DisplayTip : MonoBehaviour
     private int activeTip;
     private List<TipClass> tips;
 
-    // Start is called before the first frame update
+    [SerializeField]
+    private float displayTime;
+    [SerializeField]
+    private GameObject textField;
+    [SerializeField]
+    private GameObject uiCanvas;
+    [SerializeField]
+    private RoundManager roundManager;
+
     void Start()
     {
+        roundManager.GetComponent<RoundManager>();
         activeTip = GameManager.activeTip;
         tips = GameManager.data.tips;
         tipText = tips[activeTip].Tip;
-        // change text in tip screen
-        transform.GetChild(0).GetChild(1).GetComponent<Text>().text = '"' + tipText + '"';
+        textField.GetComponent<Text>().text = '"' + tipText + '"';
+        StartCoroutine(TipCountdown());
+    }
+
+    private IEnumerator TipCountdown()
+    {
+        // tip display countdown
+        yield return new WaitForSeconds(displayTime);
+        transform.gameObject.SetActive(false);
+        uiCanvas.transform.gameObject.SetActive(true);
+        roundManager.HighNoon();
     }
 }
