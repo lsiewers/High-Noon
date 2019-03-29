@@ -1,0 +1,57 @@
+﻿using UnityEngine.Audio;
+using System;
+using UnityEngine;
+
+public class AudioManager : MonoBehaviour
+{
+    public Sound[] sounds;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+
+        foreach (Sound s in sounds)
+        {
+            s.source = gameObject.AddComponent<AudioSource>();
+
+            s.source.clip = s.clip;
+
+            s.source.volume = s.volume;
+            s.source.pitch = s.pitch;
+            s.source.loop = s.loop;
+
+            s.source.spatialBlend = s.spatial;
+        }
+    }
+
+    private void Start()
+    {
+        Play("Theme");
+    }
+
+    // Start is called before the first frame update
+    public void Play (string name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+
+        if (s == null)
+        {
+            Debug.LogWarning("Audiofile with the name '" + name + "' doesn't exist");
+            return;
+        }
+        s.source.Play();
+    }
+
+    // Start is called before the first frame update
+    public void Stop(string name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+
+        if (s == null)
+        {
+            Debug.LogWarning("Audiofile with the name '" + name + "' doesn't exist");
+            return;
+        }
+        s.source.Stop();
+    }
+}
