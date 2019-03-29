@@ -14,6 +14,9 @@ public class OpponentManager : MonoBehaviour
     [SerializeField]
     private int opponentAmount;
 
+    [HideInInspector]
+    private int activePos;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,6 +42,8 @@ public class OpponentManager : MonoBehaviour
             if (i == 0)
             {
                 spawnCowboy(GameManager.activeTip, opponentPos);
+                activePos = opponentPos;
+                Debug.Log(activePos);
             }
             else
             {
@@ -69,4 +74,11 @@ public class OpponentManager : MonoBehaviour
 
         Instantiate(cowboy, transform.GetChild(posIndex));
     }
+
+    // public void cowboyShoot()
+    // {
+        // Transform activeOpponent = transform.GetChild(activePos);
+        // Debug.Log(activeOpponent);
+        // opponentMuzzleflash.GetComponent<AudioSource>().Play();
+    // }
 }

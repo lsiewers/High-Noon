@@ -12,7 +12,8 @@ public class PlayerShoot : MonoBehaviour
     private RoundManager roundManager;
 
     public static int ammo;
-    public static bool canShoot = false;
+    public static bool canShoot;
+    public bool gameOver;
 
     [SerializeField]
     private GameObject weaponGFX;
@@ -34,6 +35,9 @@ public class PlayerShoot : MonoBehaviour
             Debug.LogError("PlayerShoot: No camera referenced!");
         }
 
+        gameOver = false;
+        canShoot = false;
+
         weaponManager = GetComponent<WeaponManager>();
         playerMotor = GetComponent<PlayerMotor>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -46,39 +50,33 @@ public class PlayerShoot : MonoBehaviour
         currentWeapon = weaponManager.GetCurrentWeapon();
         ammo = currentWeapon.bullets;
 
-        if (canShoot)
+        if (canShoot && Input.GetButtonDown("Fire1") && !playerMotor.zoom && !gameOver)
         {
-            if (Input.GetButtonDown("Fire1") && !playerMotor.zoom)
-            {
-                Shoot();
-            }
+            Shoot();
         }
 
     }
 
     void Shoot()
     {
-
-        if (currentWeapon.bullets == 0)
-        {
-            gameManager.GameOver("Out of bullets!");
-            return;
-        }
-
         currentWeapon.bullets--;
 
         weaponManager.GetCurrentGraphics().muzzleFlash.Play();
+
+        weaponManager.GetCurrentGraphics().GetComponent<AudioSource>().Play();
+
 
         RaycastHit _hit;
 
         // see if draw is called
         if (!roundManager.draw)
         {
-            gameManager.GameOver("You shot too early, wait until 'Draw' is called");
+            gameManager.GameOver("You shot too early, wait until 'Draw' is called", 1);
         }
         else
         {
-            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, 100f, mask))
+            Debug.Log("I may shoot");
+            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, 200f, mask))
             {
                 if (_hit.collider.tag == "Opponent")
                 {
@@ -88,7 +86,18 @@ public class PlayerShoot : MonoBehaviour
                     }
                     else
                     {
-                        gameManager.GameOver("Wrong opponent!");
+                        gameManager.GameOver("Wrong opponent!", 2);
+                        gameOver = true;    
+                    }
+                }
+                else
+                {
+                    if (currentWeapon.bullets == 0)
+                    {
+                        Debug.Log("out of bullets");
+                        gameManager.GameOver("Out of bullets!", 2);
+                        gameOver = true;
+                        return;
                     }
                 }
 

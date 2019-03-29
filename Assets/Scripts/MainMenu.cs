@@ -13,4 +13,9 @@ public class MainMenu : MonoBehaviour
     {
         gameManager.startGame();
     }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
 }

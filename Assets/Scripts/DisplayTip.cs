@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DisplayTip : MonoBehaviour
 {
@@ -12,7 +12,9 @@ public class DisplayTip : MonoBehaviour
     [SerializeField]
     private float displayTime;
     [SerializeField]
-    private GameObject textField;
+    private Text textField;
+    [SerializeField]
+    private TextMeshProUGUI countdownText;
     [SerializeField]
     private GameObject uiCanvas;
     [SerializeField]
@@ -24,16 +26,30 @@ public class DisplayTip : MonoBehaviour
         activeTip = GameManager.activeTip;
         tips = GameManager.data.tips;
         tipText = tips[activeTip].Tip;
-        textField.GetComponent<Text>().text = '"' + tipText + '"';
-        StartCoroutine(TipCountdown());
+        textField = textField.GetComponent<Text>();
+        countdownText = countdownText.GetComponent<TextMeshProUGUI>();
+
+        textField.text = '"' + tipText + '"';
     }
 
-    private IEnumerator TipCountdown()
+    private void Update()
     {
+        TipCountdown();
+    }
+
+    private void TipCountdown()
+    {
+        countdownText.text = Mathf.Floor(displayTime).ToString();
         // tip display countdown
-        yield return new WaitForSeconds(displayTime);
-        transform.gameObject.SetActive(false);
-        uiCanvas.transform.gameObject.SetActive(true);
-        roundManager.HighNoon();
+        if (displayTime > 0)
+        {
+            displayTime -= Time.deltaTime;
+        }
+        else
+        {
+            transform.gameObject.SetActive(false);
+            uiCanvas.transform.gameObject.SetActive(true);
+            roundManager.timer = 1;
+        }
     }
 }

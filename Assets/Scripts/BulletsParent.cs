@@ -13,11 +13,11 @@ public class BulletsParent : MonoBehaviour
     private Sprite bulletIcon;
 
     // Update is called once per frame
-    void Update()
+    void Awake()
     {
         ammo = PlayerShoot.ammo;
 
-        if (ammo >   transform.childCount) {
+        while (ammo > transform.childCount) {
             bullet = new GameObject("Bullet");
             bullet.transform.SetParent(gameObject.transform, false);
             bullet.AddComponent<RectTransform>();
@@ -26,8 +26,14 @@ public class BulletsParent : MonoBehaviour
             bullet.GetComponent<Image>().sprite = bulletIcon;
             Instantiate(bullet);
             bullet.transform.parent = transform;
-        } 
-        else if (ammo < transform.childCount)
+        }
+    }
+
+    private void Update()
+    {
+        ammo = PlayerShoot.ammo;
+
+        if (ammo < transform.childCount)
         {
             Destroy(transform.GetChild(transform.childCount - 1).gameObject);
         }

@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public static int activeTip;
     private List<int> passedTips = new List<int>();
 
+    [HideInInspector]
     public string gameOverMsg;
 
     private void Awake()
@@ -53,10 +54,16 @@ public class GameManager : MonoBehaviour
         passedTips.Add(activeTip);
     }
 
-    public void GameOver(string message)
+    public void GameOver(string message, int delay = 0)
+    {
+        Invoke("LoadGameOver", delay);
+        RoundManager.gameOver = true;
+        gameOverMsg = message;
+    }
+
+    private void LoadGameOver()
     {
         SceneManager.LoadScene("Game Over");
-        gameOverMsg = message;
     }
 
 }

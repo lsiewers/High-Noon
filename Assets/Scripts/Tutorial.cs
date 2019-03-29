@@ -16,22 +16,15 @@ public class Tutorial : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.Return) && activeScreen == 0)
         {
-            if(activeScreen == 0)
-            {
-                transform.GetChild(activeScreen).transform.gameObject.SetActive(false);
-                activeScreen = 1;
-                transform.GetChild(activeScreen).transform.gameObject.SetActive(true);
-            }
-            else
-            {
-                gameManager.nextRound();
-            }
+            transform.GetChild(activeScreen).transform.gameObject.SetActive(false);
+            activeScreen = 1;
+            transform.GetChild(activeScreen).transform.gameObject.SetActive(true);
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            gameManager.nextRound();
+              gameManager.nextRound();
         }
     }
 }
